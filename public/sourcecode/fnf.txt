@@ -1,0 +1,64 @@
+import java.awt.AWTException;
+import java.awt.*;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.io.*;
+import javax.imageio.ImageIO;
+	class FnfAI{
+		public static void main(String args[]) throws AWTException,InterruptedException{
+			int red,threshold=150;
+			Robot r=new Robot(); 
+			r.mouseMove(1244,12);
+		r.mousePress(InputEvent.BUTTON1_MASK);
+		r.mouseRelease(InputEvent.BUTTON1_MASK);
+			// USEFUL  (red==0 || red==18 || red==249 || red==194)
+			while(true){
+				red=r.getPixelColor(779 ,120).getRed();
+				if(red<50 || Math.abs(red-18)<30 || Math.abs(red-249)<30 || Math.abs(red-194)<30){
+				r.keyPress(KeyEvent.VK_LEFT);
+				r.delay(70);
+				r.keyRelease(KeyEvent.VK_LEFT);
+				}
+
+				red=r.getPixelColor(893,96).getRed();
+				if(red<50 || Math.abs(red-18)<30 || Math.abs(red-249)<30 || Math.abs(red-194)<30){
+				r.keyPress(KeyEvent.VK_DOWN);
+				r.delay(70);
+				r.keyRelease(KeyEvent.VK_DOWN);
+				}
+				
+			/*	red=r.getPixelColor(894,199).getRed();
+				if(red==0 || red==18 || red==249 || red==194){
+				r.keyPress(KeyEvent.VK_DOWN);
+				r.delay(250);
+				r.keyRelease(KeyEvent.VK_DOWN);
+				}*/
+				
+				red=r.getPixelColor(1005 ,96).getRed();
+				if(red<50 || Math.abs(red-18)<30 || Math.abs(red-249)<30 || Math.abs(red-194)<30){
+				r.keyPress(KeyEvent.VK_UP);
+				r.delay(70);
+				r.keyRelease(KeyEvent.VK_UP);
+				}
+				
+				/*red=r.getPixelColor(1005 ,196).getRed();
+				if(red==0 || red==18 || red==249 || red==194){
+				r.keyPress(KeyEvent.VK_UP);
+				r.delay(250);
+				r.keyRelease(KeyEvent.VK_UP);
+				}*/
+
+				red=r.getPixelColor(1114 ,122).getRed();
+				if(red<50 || Math.abs(red-18)<30 || Math.abs(red-249)<30 || Math.abs(red-194)<30){
+				r.keyPress(KeyEvent.VK_RIGHT);
+				r.delay(70);
+				r.keyRelease(KeyEvent.VK_RIGHT);
+				}
+
+			}
+			
+		}
+	}

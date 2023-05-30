@@ -1,0 +1,263 @@
+  PVector p1,p2,p3,spd,pos;
+    boolean move=false;
+    int turn=0,count=5,asscount=5,score,hi;
+    float size=20,angle=0,acc=0;
+    
+    ArrayList<PVector> bullets=new ArrayList();
+    ArrayList<PVector> bs=new ArrayList();
+    ArrayList<Integer> bt=new ArrayList();
+    
+    ArrayList<PVector> ass=new ArrayList();
+    ArrayList<PVector> asspd=new ArrayList();
+    ArrayList<Integer> assrad=new ArrayList();
+    void setup(){
+     size(1000,600);
+     strokeWeight(5);
+     stroke(255);
+     pos=new PVector(width/2,height/2);
+       p1=new PVector(0,-size);
+     p2=new PVector(-size,size);
+     p3=new PVector(size,size);
+     
+     for(int i=0;i<asscount;i++){
+       addAss();
+      }
+    }
+    void draw(){
+       push();
+         background(0);
+         //DRAW BULLETS.
+       for(int i=0;i<bullets.size();i++){
+           PVector p=bullets.get(i);
+           PVector s=bs.get(i);
+           int n=bt.get(i);
+           bt.set(i,n+1);
+           point(p.x,p.y);
+           p.sub(s);
+           setBullets(p);
+           if(n>50){
+            removeBullet(i); 
+           }
+        }
+        
+        // DRAW ASTEROIDS
+        for(int i=0;i<ass.size();i++){
+         PVector a=ass.get(i);
+         PVector s=asspd.get(i);
+         int r=assrad.get(i);
+         ellipse(a.x,a.y,r*2,r*2);
+         a.add(s);
+          adjustAsteroids(a,r);
+        }
+      translate(pos.x,pos.y);
+      rotate(angle);
+      triangle(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y);
+      stroke(0,255,0);
+      ellipse(p1.x,p2.x,5,5);
+      if(move==true){
+        if(acc<10){
+        acc+=0.5;
+        }
+      }
+      else if(acc>0){
+       acc-=0.1; 
+       if(acc<=1){
+         acc=0;
+       }
+      }
+       spd=PVector.fromAngle(HALF_PI+angle);
+        spd.setMag(acc);
+        pos.sub(spd);
+        if(turn==-1){
+          angle-=0.09; 
+        }
+        else if(turn==1){
+         angle+=0.09; 
+        }
+        
+        checkCollision();
+        adjustShip();
+        pop();
+                fill(255);
+        textSize(30);
+        text("SCORE:-"+score+"      HIGH SCORE:-"+hi,30,30);
+        if(playerCollision()==true){
+          //delay(1000);
+        // pos.x=width/2;
+         //pos.y=height/2;
+         //spd.x=0;spd.y=0;
+         //acc=0;
+         fill(255,0,0);
+         score=0;
+        }
+        else{
+         noFill(); 
+        }
+        if(score>hi){
+          hi=score; 
+         }
+        if(ass.size()==0){
+          int l=(int)random(1,5);
+          for(int i=0;i<l;i++){
+           addAss(); 
+          }
+        }
+     }
+    
+    void keyPressed(){
+     if(key==CODED){
+       if(keyCode==LEFT){
+        turn=-1;
+       }
+       else if(keyCode==RIGHT){
+         turn=1;
+       }
+       else if(keyCode==UP){
+         move=true;
+       }
+      }
+      else if(keyCode==87){
+        if(bullets.size()<count){
+        PVector sp=PVector.fromAngle(HALF_PI+angle);
+        sp.setMag(20);
+        PVector b=new PVector(pos.x,pos.y);
+       bs.add(sp);
+       bullets.add(b);
+       bt.add(0);
+        }
+      }
+   }
+   
+   void keyReleased(){
+     if(key==CODED){
+       if(keyCode==UP){
+         move=false;
+       }
+       else if(keyCode==LEFT || keyCode==RIGHT){
+         turn=0;
+       }
+     }
+  }
+  
+  void setBullets(PVector s){
+    if(s.x>=width){
+      s.x=0;
+    }
+    else if(s.x<=0){
+     s.x=width; 
+    }
+    if(s.y>=height){
+      s.y=0;
+    }
+    else if(s.y<=0){
+     s.y=height; 
+    }
+  }
+  
+  void adjustAsteroids(PVector p,int r){
+    if(p.x-r>=width){
+      p.x=-r;
+    }
+    else if(p.x+r<=0){
+     p.x=width+r; 
+    }
+    if(p.y-r>=height){
+      p.y=-r;
+    }
+    else if(p.y+r<=0){
+     p.y=height+r; 
+    }
+  }
+  
+  void checkCollision(){
+outer:for(int i=ass.size()-1;i>=0;i--){
+       PVector a=ass.get(i);
+       int r=assrad.get(i);
+       for(int j=bullets.size()-1;j>=0;j--){
+         PVector b=bullets.get(j);
+         if(dist(a.x,a.y,b.x,b.y)<r){
+            score++;
+           if(r<=15){
+            ass.remove(i);
+            asspd.remove(i);
+            assrad.remove(i);
+           }
+           else{
+            assrad.set(i,r/2); 
+            breakAss(a,r); 
+           }
+            bullets.remove(j);
+            bs.remove(j);
+            bt.remove(j);
+          break outer;
+       }
+     } 
+   }
+  }
+  
+  void breakAss(PVector p,int r){
+    r=r/2;
+    ass.add(new PVector(p.x+1,p.y+1));
+    assrad.add(r);
+    asspd.add(new PVector(random(-5,5),random(-5,5))); 
+   }
+  
+  void adjustShip(){
+    if(pos.x-size>=width){
+     pos.x=-size; 
+    }
+    else if(pos.x+size<=0){
+     pos.x=width+size; 
+    }
+    if(pos.y-size>=height){
+      pos.y=-size;
+    }
+    else if(pos.y+size<=0){
+     pos.y=height+size; 
+    }
+  }
+  
+  void removeBullet(int ind){
+    bs.remove(ind);
+    bullets.remove(ind);
+    bt.remove(ind);
+  }
+  
+  boolean playerCollision(){
+    for(int i=0;i<ass.size();i++){
+      PVector a=ass.get(i);
+      int r=assrad.get(i);
+        if(dist(pos.x,pos.y,a.x,a.y)<=r+size-10){
+          /*if(r<=15){
+            ass.remove(i);
+            asspd.remove(i);
+            assrad.remove(i);
+            score++;
+           }
+           else{
+            assrad.set(i,r/2); 
+            breakAss(a,r); 
+           }*/
+         return true; 
+        }
+    }
+    return false;
+  }
+  
+  PVector givePos(){
+    PVector r=new PVector(random(width),random(height));
+    if(dist(pos.x,pos.y,r.x,r.y)>60+size+200){
+     return r;
+    }
+    else{
+     givePos(); 
+    }
+    return r;
+  }
+  
+  void addAss(){
+      PVector p=givePos();
+      ass.add(new PVector(p.x,p.y)); 
+      asspd.add(new PVector(random(-5,5),random(-5,5))); 
+      assrad.add(60); 
+  }

@@ -1,0 +1,107 @@
+      int buffer=0;
+      PVector ls[]=new PVector[5];
+      PVector le[]=new PVector[ls.length];
+      ArrayList<PVector> ends=new ArrayList();
+      ArrayList<Float> ds=new ArrayList();
+      float w;
+      void setup(){
+       size(1000,600); 
+       for(int i=0;i<ls.length-1;i++){
+        ls[i]=new PVector(random(width*0.5),random(height)); 
+        le[i]=new PVector(random(width*0.5),random(height)); 
+       }
+       ls[ls.length-1]=new PVector(width*0.5,0);
+       le[ls.length-1]=new PVector(width*0.5,height);
+       rectMode(CENTER);
+      }
+      
+      void draw(){
+       background(0);
+       stroke(255,50);
+       strokeWeight(10);
+       point(mouseX,mouseY);
+       strokeWeight(2);
+       //buffer=0;
+       float count=0;
+       for(float i=0+buffer;i<=90+buffer;i+=1){
+         float ang=radians(i);
+         float x=mouseX+width*cos(ang);
+         float y=mouseY+width*sin(ang);
+         PVector hp=getHitPoint(new PVector(x,y));
+         if(hp!=null){
+        line(mouseX,mouseY,hp.x,hp.y); 
+        ends.add(hp);
+        count++;
+       }
+      }
+       stroke(255);
+       strokeWeight(3);
+       for(int i=0;i<ls.length;i++){
+        line(ls[i].x,ls[i].y,le[i].x,le[i].y) ;
+       }
+       noStroke();
+       // drawing actual walls
+       w=width*0.5/count;
+              float sx=width*0.5+w/2;
+       for(int i=0;i<ends.size();i++){
+         PVector e=ends.get(i);
+         float d=ds.get(i);
+         float c=map(d,0,width*0.5,255,10);
+        fill(c);
+        float h=map(d,0,width*0.5,height,50);
+        rect(sx,height/2,w,h,45);
+        sx+=w;
+       }
+       ends.clear();
+       ds.clear();
+      }
+      
+      void keyPressed(){
+         if(key=='a'){
+           buffer-=5;
+         }
+         else if(key=='d'){
+          buffer+=5; 
+         }
+      }
+      
+      PVector getHitPoint(PVector v){
+        float dmin=width*5;
+        PVector closest=new PVector(0,0);
+       for(int i=0;i<ls.length;i++){
+         
+          float x1=ls[i].x;
+          float y1=ls[i].y;
+          
+          float x2=le[i].x;
+          float y2=le[i].y;
+        
+        
+          float x3=mouseX;
+          float y3=mouseY;
+          
+          float x4=v.x;
+          float y4=v.y;
+        
+        float denom=(x1-x2)*(y3-y4)-(y1-y2)*(x3-x4);
+          if(denom!=0){
+            float t=((x1-x3)*(y3-y4)-(y1-y3)*(x3-x4))/denom;
+            float u=-((x1-x2)*(y1-y3)-(y1-y2)*(x1-x3))/denom;
+            if(t>0 && t<1 && u>0){
+              PVector p=new PVector(0,0);
+              p.x=x1+t*(x2-x1);
+              p.y=y1+t*(y2-y1);
+              float dist=dist(mouseX,mouseY,p.x,p.y);
+              if(dist<dmin){
+               dmin=dist;
+               closest.set(p.x,p.y);
+              }
+            }
+          }
+       }
+       if(closest.x>0){
+         ds.add(dmin);
+        return closest; 
+       }
+        return null;
+      }

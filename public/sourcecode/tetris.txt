@@ -1,0 +1,319 @@
+  PVector p1,p2,p3,p4;
+  ArrayList<PVector> ar=new ArrayList();
+  ArrayList<Integer> cols=new ArrayList();
+  ArrayList<PVector> collect=new ArrayList();
+  float size=20,rotation=1,startx=200,starty;
+  color shades[]={color(255,0,0),color(255,242,0),color(0,255,0),color(0,0,255),color(255,174,201)};
+  int c,maxlimit,count,score;
+  void setup(){
+   size(400,600);
+   p1=new PVector(10,10);
+   p2=new PVector(10,10);
+   p3=new PVector(10,10);
+   p4=new PVector(10,10);
+   makeBlocks();
+   maxlimit=(int)(width/size);
+   textSize(15);
+  }
+  
+  void draw(){
+   background(255);
+   fill(shades[c]);
+   rect(p1.x,p1.y,size,size);
+   rect(p2.x,p2.y,size,size);
+   rect(p3.x,p3.y,size,size);
+   rect(p4.x,p4.y,size,size);
+   fill(0);
+   text("SCORE:-"+String.valueOf(score),10,30);
+   int n=0;
+   for(PVector p:ar){
+     int num=(int)cols.get(n);
+     fill(shades[num]);
+    rect(p.x,p.y,size,size);
+    n++;
+   }
+   if(p1.y+size<height && p2.y+size<height && p3.y+size<height && p4.y+size<height && checkCollision()==false){
+   p1.y+=size;p2.y+=size;p3.y+=size;p4.y+=size;
+   }
+   else{
+     ar.add(p1);ar.add(p2);ar.add(p3);ar.add(p4);
+     cols.add(c);cols.add(c);cols.add(c);cols.add(c);
+        /* c=(int)random(0,shades.length);
+         c=4;
+         rotation=1;
+         if(c==0){
+         makeRed();
+         }
+         else if(c==1){
+          makeYellow(); 
+         }
+         else if(c==2){
+          makeGreen(); 
+         }
+         else if(c==3){
+           makeBlue();
+         }
+         else if(c==4){
+          makePink(); 
+         }*/
+         checkIfScored();
+         makeBlocks();
+   }
+   delay(75);
+  }
+  
+  void keyPressed(){
+    if(key==CODED){
+     if(keyCode==UP){
+       if(c==0){
+       rotateRed();
+       }
+       else if(c==2){
+        rotateGreen(); 
+       }
+       else if(c==3){
+         rotateBlue();
+       }
+       else if(c==4){
+        rotatePink(); 
+       }
+     }
+     else if(keyCode==LEFT){
+       if(p1.x>0 && p2.x>0 && p3.x>0 && p4.x>0 && checkLeftCollision()==false){
+      p1.x-=size;p2.x-=size;p3.x-=size;p4.x-=size; 
+     }
+    }
+     else if(keyCode==RIGHT){
+       if(p1.x+size<width && p2.x+size<width && p3.x+size<width && p4.x+size<width && checkRightCollision()==false){
+        p1.x+=size;p2.x+=size;p3.x+=size;p4.x+=size;  
+       }
+     }
+    }
+  }
+  void makeRed(){
+   p1=new PVector(startx,0);
+   p2=new PVector(p1.x+size,p1.y);
+   p3=new PVector(p2.x+size,p1.y);
+   p4=new PVector(p2.x,p2.y+size);
+  }
+  void rotateRed(){
+    if(rotation==1){
+      p3.set(p2.x,p2.y-size);
+      rotation++;
+    }
+    else if(rotation==2){
+      p3.set(p2.x+size,p2.y);
+      p4.set(p2.x,p2.y-size);
+      rotation++;
+    }
+    else if(rotation==3){
+      p3.set(p2.x,p2.y+size);
+      p1.set(p2.x+size,p2.y);
+      rotation++;
+    }
+    else{
+      p1.set(p2.x-size,p2.y);
+      p3.set(p2.x+size,p2.y);
+      p4.set(p2.x,p2.y+size);
+      rotation=1;
+    }
+  }
+  
+  void makeYellow(){
+    p1=new PVector(startx,0);
+    p2=new PVector(p1.x+size,p1.y);
+    p3=new PVector(p1.x,p1.y+size);
+    p4=new PVector(p1.x+size,p1.y+size);
+  }
+  
+  void makeBlue(){
+    p1=new PVector(startx,0);
+    p2=new PVector(p1.x+size,p1.y);
+    p3=new PVector(p2.x+size,p2.y);
+    p4=new PVector(p3.x+size,p3.y);
+  }
+  void rotateBlue(){
+   if(rotation==1 || rotation==3){
+     p1.set(p2.x,p2.y-size);
+     p3.set(p2.x,p2.y+size);
+     p4.set(p3.x,p3.y+size);
+     rotation++;
+   }
+   else{
+     p1.set(p2.x-size,p2.y);
+     p3.set(p2.x+size,p2.y);
+     p4.set(p3.x+size,p3.y);
+     rotation++;
+     if(rotation>4){
+      rotation=1; 
+     }
+   }
+  }
+  
+  void makeGreen(){
+    p1=new PVector(startx,0);
+    p2=new PVector(p1.x,p1.y+size);
+    p3=new PVector(p2.x+size,p2.y);
+    p4=new PVector(p3.x,p3.y+size);
+  }
+  void rotateGreen(){
+    if(rotation==1 || rotation==3){
+   p1.set(p3.x,p3.y);
+   p3.set(p2.x,p2.y+size);
+   p4.set(p3.x-size,p3.y);
+   rotation++;
+    }
+   else{
+    p1.set(p2.x,p2.y-size);
+    p3.set(p2.x+size,p2.y);
+    p4.set(p3.x,p3.y+size);
+    rotation++;
+     if(rotation>4){
+      rotation=1; 
+     }
+   }
+  }
+  
+  void makePink(){
+   p1=new PVector(startx,0);
+   p2=new PVector(p1.x,p1.y+size);
+   p3=new PVector(p2.x,p2.y+size);
+   p4=new PVector(p3.x+size,p3.y);
+  }
+  void rotatePink(){
+   if(rotation==1){
+    p1.set(p2.x+size,p2.y);
+    p4.set(p1.x+size,p1.y);
+    rotation++;
+   }
+   else if(rotation==2){
+     p1.set(p2.x+size,p2.y);
+     p3.set(p1.x,p1.y+size);
+     p4.set(p3.x,p3.y+size);
+     rotation++;
+   }
+   else if(rotation==3){
+    p1.set(p2.x-size,p2.y);
+    p3.set(p2.x+size,p2.y);
+    p4.set(p3.x,p3.y-size);
+    rotation++;
+   }
+   else{
+     p1.set(p2.x,p2.y-size);
+      p3=new PVector(p2.x,p2.y+size);
+     p4=new PVector(p3.x+size,p3.y);
+     rotation=1;
+   }
+  }
+  
+  void makeBlocks(){
+   c=(int)random(0,shades.length);
+         rotation=1;
+         if(c==0){
+         makeRed();
+         }
+         else if(c==1){
+          makeYellow(); 
+         }
+         else if(c==2){
+          makeGreen(); 
+         }
+         else if(c==3){
+           makeBlue();
+         }
+         else if(c==4){
+          makePink(); 
+         } 
+    }
+    
+    boolean checkCollision(){
+     for(PVector aim:ar){
+      if((p1.y+size>=aim.y && p1.x==aim.x) || (p2.y+size>=aim.y && p2.x==aim.x) || (p3.y+size>=aim.y && p3.x==aim.x) || (p4.y+size>=aim.y && p4.x==aim.x)){
+        return true;
+      }
+     }
+     return false;
+    }
+    
+    boolean checkRightCollision(){
+      for(PVector aim:ar){
+      if((p1.x+size>=aim.x && p1.y==aim.y) || (p2.x+size>=aim.x && p2.y==aim.y) || (p3.x+size>=aim.x && p3.y==aim.y) || (p4.x+size>=aim.x && p4.y==aim.y)){
+        return true;
+      }
+     }
+     return false;
+    }
+    
+    boolean checkLeftCollision(){
+      for(PVector aim:ar){
+      if((p1.x-size<=aim.x && p1.y==aim.y) || (p2.x-size<=aim.x && p2.y==aim.y) || (p3.x-size<=aim.x && p3.y==aim.y) || (p4.x-size<=aim.x && p4.y==aim.y)){
+        return true;
+      }
+     }
+     return false;
+    }
+    
+   /*void checkIfScored(){
+     loadPixels();
+     count=0;
+ outer: for(int i=(int)(height-size/2);i>0;i-=size){
+       for(int j=(int)size/2;j<width;j+=size){
+         int loc=j+i*width;
+         int r=(int)red(pixels[loc]);
+         if(r!=255){
+          count++;
+          collect.add(new PVector(i-size/2,j-size/2));
+         }
+       }
+       if(count==20){
+         print(collect);
+         clearBoxes();
+         shiftBoxes(i-size/2);
+       }
+       else if(count==0){
+        break outer; 
+       }
+       else{
+        count=0;
+       }
+          collect.clear();
+     }
+     updatePixels();
+    }*/
+    void checkIfScored(){
+      for(int h=(int)(height-size);h>0;h-=size){
+              count=0;
+       for(PVector p:ar){
+        if(p.y==h){
+         count++;
+         collect.add(p);
+        }
+       }
+       if(count==maxlimit){
+        clearBoxes();
+        shiftBoxes(h);
+        score+=5;
+       }
+       collect.clear();
+      }
+    }
+    
+    void shiftBoxes(float y){
+      for(PVector q:ar){
+       if(q.y<y){
+        q.y+=size; 
+       }
+      }
+    }
+    
+    void clearBoxes(){
+      for(int i=0;i<ar.size();){
+        PVector p=ar.get(i);
+       if(collect.contains(p)){
+        ar.remove(i); 
+       }
+       else{
+        i++; 
+       }
+      }
+    }

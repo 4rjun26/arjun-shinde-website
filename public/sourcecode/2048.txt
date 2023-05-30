@@ -1,0 +1,284 @@
+  float size=100,spd=10;
+  int cond=0,count=2,textsize=24;
+  boolean moving=false,validmove=true;
+  ArrayList<PVector> indices=new ArrayList();
+  ArrayList<Integer> nums=new ArrayList();
+  void setup(){
+  size(400,400);
+    for(int i=0;i<count;){
+      float x1=floor(random(0,3))*size;
+      float y1=floor(random(0,3))*size;
+      PVector a=new PVector(x1,y1);
+      if(isPresent(a)==false){
+        indices.add(a);
+        nums.add(2);
+        i++;
+      }
+    }
+    textSize(textsize);
+    colorMode(HSB);
+  }
+  
+  void draw(){
+    background(255);
+   /* for(int i=0;i<indices.size();i++){
+    //  int n=nums.get(i);
+      PVector pos=indices.get(i);
+     //fill(51);
+     //text(String.valueOf(n),pos.x+textsize,pos.y+textsize);
+    }*/
+    for(int cou=0;cou<2;cou++){
+    for(int i=0;i<nums.size();i++){
+      PVector pos=indices.get(i);
+     int n=(int)nums.get(i);
+     int cont=getNth(n);
+    float c=map(n,1,11,0,255);
+     fill(c,255,255);
+    // fill(random(255),random(255),random(255));
+     rect(pos.x,pos.y,size,size,7);
+     fill(0);
+     text(String.valueOf(n),pos.x+size/2,pos.y+size/2);
+    }
+    if(moving==true){
+      validmove=true;
+      if(cond==1){
+        moveUp();
+      }
+      else if(cond==2){
+        moveDown();
+      }
+      else if(cond==3){
+        moveLeft();
+      }
+      else if(cond==4){
+        moveRight();
+      }
+    }
+    }
+  }
+  
+  void keyReleased(){
+   if(key==CODED){
+     if(moving==false){
+    if(keyCode==UP){
+     cond=1;
+    }
+   else if(keyCode==DOWN){
+     cond=2;
+    }
+   else if(keyCode==LEFT){
+     cond=3;
+    }
+    else if(keyCode==RIGHT){
+     cond=4;
+    }
+  moving=true;
+ }
+   }
+  }
+  
+  void moveUp(){
+    boolean changed=false;
+    for(int i=0;i<indices.size();i++){
+    PVector pos=indices.get(i);
+      if(pos.y>0 && isCollidedUp(pos,i)==false){
+      pos.y-=spd;
+      changed=true;
+      validmove=true;
+      }
+    }
+    if(changed==false){
+     moving=false; 
+    // if(validmove==true){
+     addBlock();
+    // validmove=false;
+    // }
+    }
+  }
+  
+  void moveDown(){
+    boolean changed=false;
+    for(int i=0;i<indices.size();i++){
+    PVector pos=indices.get(i);
+      if(pos.y+size<height && isCollidedDown(pos,i)==false){
+       pos.y+=spd; 
+       changed=true;
+       validmove=true;
+      }
+    }
+    if(changed==false){
+     moving=false;
+     //if(validmove==true){
+     addBlock();
+     //validmove=false;
+     //}
+    }
+  }
+  
+  void moveLeft(){
+    boolean changed=false;
+    for(int i=0;i<indices.size();i++){
+    PVector pos=indices.get(i);
+      if(pos.x>0 && isCollidedLeft(pos,i)==false){
+      pos.x-=spd;
+      changed=true;
+      validmove=true;
+      }
+    }
+    if(changed==false){
+     moving=false;
+     //if(validmove==true){
+     addBlock();
+    // validmove=false;
+    // }
+    }
+  }
+  
+  void moveRight(){
+    boolean changed=false;
+    for(int i=0;i<indices.size();i++){
+    PVector pos=indices.get(i);
+      if(pos.x+size<width && isCollidedRight(pos,i)==false){
+       pos.x+=spd; 
+       changed=true;
+       validmove=true;
+      }
+    }
+    if(changed==false){
+     moving=false;
+    // if(validmove==true){
+     addBlock();
+    // validmove=false;
+    // }
+    }
+  }
+  
+  boolean isPresent(PVector p){
+    for(int i=0;i<indices.size();i++){
+     PVector q=indices.get(i);
+     if(p.x==q.x && p.y==q.y){
+      return true; 
+     }
+    }
+    return false;
+  }
+  
+  boolean isCollidedUp(PVector target,int ind){
+    for(int i=0;i<indices.size();i++){
+      PVector aim=indices.get(i);
+      if(target.equals(aim)==false){
+        if(target.y==aim.y+size && target.x==aim.x){
+          if(nums.get(i).equals(nums.get(ind))){
+            combBlocks(ind,i,(int)nums.get(i));
+          }
+         return true; 
+        }
+      }
+    }
+    return false;
+  }
+  
+  boolean isCollidedDown(PVector target,int ind){
+    for(int i=0;i<indices.size();i++){
+      PVector aim=indices.get(i);
+      if(target.equals(aim)==false){
+        if(target.y+size==aim.y && target.x==aim.x){
+          if(nums.get(i).equals(nums.get(ind))){
+            combBlocks(ind,i,(int)nums.get(i));
+          }
+         return true; 
+        }
+      }
+    }
+    return false;
+  }
+  
+  boolean isCollidedLeft(PVector target,int ind){
+    for(int i=0;i<indices.size();i++){
+      PVector aim=indices.get(i);
+      if(target.equals(aim)==false){
+        if(target.x==aim.x+size && target.y==aim.y){
+          if(nums.get(i).equals(nums.get(ind))){
+            combBlocks(ind,i,(int)nums.get(i));
+          }
+         return true; 
+        }
+      }
+    }
+    return false;
+  }
+  
+  boolean isCollidedRight(PVector target,int ind){
+    for(int i=0;i<indices.size();i++){
+      PVector aim=indices.get(i);
+      if(target.equals(aim)==false){
+        if(target.x+size==aim.x && target.y==aim.y){
+          if(nums.get(i).equals(nums.get(ind))){
+            combBlocks(ind,i,(int)nums.get(i));
+          }
+         return true; 
+        }
+      }
+    }
+    return false;
+  }
+  
+  void addBlock(){
+   float x1=floor(random(0,4))*size;
+    float y1=floor(random(0,4))*size;
+    PVector a=new PVector(x1,y1);
+      if(isPresent(a)==false){
+        indices.add(a);
+        if(random(100)<=40){
+         nums.add(4); 
+        }
+        else{
+         nums.add(2); 
+        }
+      }
+      else{
+       addBlock(); 
+      }
+  }
+  
+  void combBlocks(int ind1,int ind2,int power){
+   // indices.remove(ind1);
+    PVector p1=indices.get(ind1);
+    PVector p2=indices.get(ind2);
+    float dist1=0,dist2=0;
+      
+    if(cond==1){
+        dist1=abs(p1.y-0);
+        dist2=abs(p2.y-0);
+      }
+      else if(cond==2){
+        dist1=abs(p1.y-height);
+        dist2=abs(p2.y-height);
+      }
+      else if(cond==3){
+        dist1=abs(p1.x-0);
+        dist2=abs(p2.x-0);
+      }
+      else if(cond==4){
+        dist1=abs(p1.x-width);
+        dist2=abs(p2.x-width);
+      }
+      if(dist1<dist2){
+       nums.set(ind1,power*2);
+       nums.remove(ind2);
+       indices.remove(ind2);
+      }
+      else{
+       nums.set(ind2,power*2);
+       nums.remove(ind1);
+       indices.remove(ind1);
+      }
+  }
+  
+  int getNth(int n){
+    int count=0;
+    while(n>1){
+      n/=2;
+    }
+    return count;
+  }

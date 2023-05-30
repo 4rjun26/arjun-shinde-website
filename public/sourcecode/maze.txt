@@ -1,0 +1,122 @@
+  import java.util.Stack;
+   
+   PVector player;
+   float l=60,pr=5;
+   boolean done=false;
+   int rows=10,cols=10;
+   PVector UD[][]=new PVector[rows][cols];
+   PVector LR[][]=new PVector[rows][cols];
+   PVector ar[][]=new PVector[rows][cols];
+   boolean visited[][]=new boolean[rows][cols];
+    void setup(){
+     size(601,601);
+     player=new PVector(l/2,l/2);
+     for(int i=0;i<rows;i++){
+       for(int j=0;j<cols;j++){
+         ar[i][j]=new PVector(j*l+(l/2),i*l+(l/2));
+         UD[i][j]=new PVector(1,1);
+         LR[i][j]=new PVector(1,1);
+       }
+     }
+    }
+    
+    void draw(){
+      background(255);
+      if(done==false){
+     generateMaze();
+     done=true;
+      }
+     println("done");
+      for(int i=0;i<rows;i++){
+       for(int j=0;j<cols;j++){
+         makeWalls(i,j);
+       }
+     }
+     ellipse(player.x,player.y,20,20);
+   /*  fill(0,0,255);
+     ellipse(ar[0][0].x,ar[0][0].y,pr*2,pr*2);
+    // point(ar[0][0].x,ar[0][0].y);
+    strokeWeight(10);
+     stroke(255,0,0);
+     point(ar[rows-1][cols-1].x,ar[rows-1][cols-1].y);*/
+     noLoop();
+     
+    }
+    
+    void generateMaze(){
+      PVector cur=new PVector(l/2,l/2);
+      visited[(int)((cur.y-l/2)/l)][(int)((cur.x-l/2)/l)]=true;
+        Stack<PVector> s=new Stack();
+          s.push(cur);
+          
+          while(s.size()>0){
+            cur=s.pop();
+            ArrayList<PVector> uvn=findUVNeib((int)((cur.y-l/2)/l),(int)((cur.x-l/2)/l));
+              if(uvn.size()>0){
+                s.push(cur);
+                  PVector p=uvn.get(floor(random(uvn.size())));
+                  removeWall(new PVector((int)((cur.y-l/2)/l),(int)((cur.x-l/2)/l)),new PVector((int)((p.y-l/2)/l),(int)((p.x-l/2)/l)));
+                  visited[(int)((p.y-l/2)/l)][(int)((p.x-l/2)/l)]=true;
+                  s.push(p);
+              }
+          }
+      
+    }
+    
+    ArrayList<PVector> findUVNeib(int r,int c){
+        ArrayList<PVector> a=new ArrayList();
+        if(r>0 && visited[r-1][c]==false){
+          a.add(new PVector(c*l+l/2,(r-1)*l+l/2));
+        }
+        if(r<rows-1 && visited[r+1][c]==false){
+          a.add(new PVector(c*l+l/2,(r+1)*l+l/2));
+        }
+        if(c>0 && visited[r][c-1]==false){
+          a.add(new PVector((c-1)*l+l/2,r*l+l/2));
+        }
+        if(c<cols-1 && visited[r][c+1]==false){
+          a.add(new PVector((c+1)*l+l/2,r*l+l/2));
+        }
+        return a;
+    }
+    
+    void makeWalls(int r,int c){
+      if(UD[r][c].x==1){
+        line(ar[r][c].x-l/2,ar[r][c].y-l/2,ar[r][c].x+l/2,ar[r][c].y-l/2);
+      }
+      if(UD[r][c].y==1){
+          line(ar[r][c].x-l/2,ar[r][c].y+l/2,ar[r][c].x+l/2,ar[r][c].y+l/2);
+      }
+      if(LR[r][c].x==1){
+          line(ar[r][c].x-l/2,ar[r][c].y-l/2,ar[r][c].x-l/2,ar[r][c].y+l/2);
+      }
+      if(LR[r][c].y==1){
+          line(ar[r][c].x+l/2,ar[r][c].y-l/2,ar[r][c].x+l/2,ar[r][c].y+l/2);
+      }
+    }
+    
+    void removeWall(PVector current,PVector chosen){
+    if(chosen.x==current.x){
+      //above current 
+     if(chosen.y<current.y){
+       UD[(int)chosen.y][(int)chosen.x].y=0;
+       UD[(int)current.y][(int)current.x].x=0;
+     }
+     // below current
+     else if(chosen.y>current.y){
+       UD[(int)chosen.y][(int)chosen.x].x=0;
+       UD[(int)current.y][(int)current.x].y=0;
+     }
+    }
+     // left of current
+     else if(chosen.x<current.x){
+       LR[(int)chosen.y][(int)chosen.x].y=0;
+       LR[(int)current.y][(int)current.x].x=0;
+     }
+     // right of current
+     else if(chosen.x>current.x){
+       LR[(int)chosen.y][(int)chosen.x].x=0;
+       LR[(int)current.y][(int)current.x].y=0;
+     }
+     
+    }
