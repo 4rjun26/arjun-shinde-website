@@ -453,7 +453,7 @@ function opennav(){
             {/* Asteroids */}
             <div className={styles.work}>
               <div className={styles.pic}>
-                <Image className={styles.image} src={'/asteroids.jpg'} alt="bruh" width={1000} height={1000} />
+                <Image className={styles.image} src={'/asteroids.JPG'} alt="bruh" width={1000} height={1000} />
               </div>
               <div className={styles.info}>
                 <h1>Asteroids</h1>
@@ -467,7 +467,7 @@ function opennav(){
             {/* RayCasting */}
             <div className={styles.work}>
               <div className={styles.pic}>
-                <Image className={styles.image} src={'/raycast.jpg'} alt="bruh" width={1000} height={1000} />
+                <Image className={styles.image} src={'/raycast.JPG'} alt="bruh" width={1000} height={1000} />
               </div>
               <div className={styles.info}>
                 <h1>Ray Casting</h1>
@@ -482,7 +482,7 @@ function opennav(){
             {/* Maze Generator */}
             <div className={styles.work}>
               <div className={styles.pic}>
-                <Image className={styles.image} src={'/maze.jpg'} alt="bruh" width={1000} height={1000} />
+                <Image className={styles.image} src={'/maze.JPG'} alt="bruh" width={1000} height={1000} />
               </div>
               <div className={styles.info}>
                 <h1>Maze Generator</h1>
@@ -510,7 +510,7 @@ function opennav(){
             {/* 2048 */}
             <div className={styles.work}>
               <div className={styles.pic}>
-                <Image className={styles.image} src={'/2048.jpg'} alt="bruh" width={1000} height={1000} />
+                <Image className={styles.image} src={'/2048.JPG'} alt="bruh" width={1000} height={1000} />
               </div>
               <div className={styles.info}>
                 <h1>2048</h1>
@@ -524,7 +524,7 @@ function opennav(){
             {/* Terrain */}
             <div className={styles.work}>
               <div className={styles.pic}>
-                <Image className={styles.image} src={'/terrain.jpg'} alt="bruh" width={1000} height={1000} />
+                <Image className={styles.image} src={'/terrain.JPG'} alt="bruh" width={1000} height={1000} />
               </div>
               <div className={styles.info}>
                 <h1>Terrain Generator</h1>
